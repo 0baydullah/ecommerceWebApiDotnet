@@ -1,6 +1,28 @@
-@ecommerce_web_api_HostAddress = http://localhost:5268
-
-GET {{ecommerce_web_api_HostAddress}}/weatherforecast/
-Accept: application/json
+GET http://localhost:5268
 
 ###
+GET http://localhost:5268/api/categories?searchValue=pc
+
+###
+POST http://localhost:5268/api/categories
+Content-Type: application/json
+
+{
+    "name" : "camera and mobile",
+    "description" : "description of abde"
+}
+
+
+###
+PUT  http://localhost:5268/api/categories/614e96cc-225b-4d2f-976c-ef23ac406afb
+Content-Type: application/json
+
+{
+    "name" : "abc",
+    "description" : "description of abc"
+}
+
+
+
+###
+DELETE  http://localhost:5268/api/categories/29d1889e-9096-45ea-bfd7-24812fa5f838
