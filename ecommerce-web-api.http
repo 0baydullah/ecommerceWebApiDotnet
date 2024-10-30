@@ -1,25 +1,26 @@
 GET http://localhost:5268
 
 ###
-GET http://localhost:5268/api/categories?searchValue=pc
+GET http://localhost:5268/api/categories?searchValue=
 
 ###
 POST http://localhost:5268/api/categories
 Content-Type: application/json
 
 {
-    "name" : "camera and mobile",
-    "description" : "description of abde"
+    "name" : "Pookie",
+    "description" : ""
 }
 
 
 ###
-PUT  http://localhost:5268/api/categories/614e96cc-225b-4d2f-976c-ef23ac406afb
+PUT  http://localhost:5268/api/categories/cb891cfd-a894-4dd0-a019-e6a18c4b86c4
 Content-Type: application/json
 
 {
-    "name" : "abc",
+    "name" : "pookieeeee",
     "description" : "description of abc"
+
 }
 
 

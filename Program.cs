@@ -34,6 +34,15 @@ app.MapGet("/api/categories",([FromQuery] string searchValue="")=>{
 
 app.MapPost("/api/categories",([FromBody] Category categoryData)=>{
     
+    if(string.IsNullOrEmpty(categoryData.Name)){
+        return Results.BadRequest("Category name is required");
+    }
+
+    if(!string.IsNullOrEmpty(categoryData.Name)){
+        if(categoryData.Name.Length<2)
+            return Results.BadRequest("category name should be longger than 2");
+    }
+
     var newCategory = new Category{
         CategoryId = Guid.NewGuid(),
         Name = categoryData.Name,
@@ -46,22 +55,32 @@ app.MapPost("/api/categories",([FromBody] Category categoryData)=>{
 
 
 
-app.MapPut("/api/categories/{categoryId}",(Guid categoryId, [FromBody] Category categoryData)=>{
+app.MapPut("/api/categories/{categoryId:guid}",(Guid categoryId, [FromBody] Category categoryData)=>{
     var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
     
     if(foundCategory == null){
         return Results.NotFound("Category with this id does not exist");
     }
+    if(categoryData == null){
+        return Results.BadRequest("category data is missing");
+    }
 
-    foundCategory.Name = categoryData.Name;
-    foundCategory.Description = categoryData.Description;
+    if(!string.IsNullOrWhiteSpace(categoryData.Name)){
+        if(categoryData.Name.Length>2)
+            foundCategory.Name = categoryData.Name;
+        else return Results.BadRequest("category name should be longger than 2");
+    }
+    
+    if(!string.IsNullOrWhiteSpace(categoryData.Name)){
+        foundCategory.Description = categoryData.Description;
+    }
     
     return Results.Ok();
 });
 
 
 
-app.MapDelete("/api/categories/{categoryId}",(Guid categoryId)=>{
+app.MapDelete("/api/categories/{categoryId:guid}",(Guid categoryId)=>{
     var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
     
     if(foundCategory == null){
@@ -79,7 +98,7 @@ app.Run();
 
 public record Category{
     public Guid CategoryId {get; set;}
-    public String? Name {get; set;}
-    public String? Description {get; set;}
+    public String Name {get; set;}
+    public String Description {get; set;} = string.Empty;
     public DateTime CreatedAt {get; set;}
 };
