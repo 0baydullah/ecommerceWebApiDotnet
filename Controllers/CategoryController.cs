@@ -14,13 +14,27 @@ namespace ecommerce_web_api.Controllers
     {
         private static List<Category> categories = new List<Category>();
         
+
+        [HttpGet("{categoryId:guid}")]
+        public IActionResult GetCategoriesById(Guid categoryId){
+           
+            var foundCategory = categories.FirstOrDefault(c=>c.CategoryId == categoryId);
+            if(foundCategory == null){
+                return NotFound(ApiResponse<object>.ErrorResponse(new List<string>{"Category is not found with this id"},404,"validation failed"));
+            }
+            var categoryReadDto =new CategoryReadDto{
+                CategoryId = foundCategory.CategoryId,
+                Name = foundCategory.Name,
+                Description = foundCategory.Description,
+                CreatedAt = foundCategory.CreatedAt
+            };
+            return Ok(ApiResponse<CategoryReadDto>.SuccessResponse(categoryReadDto,200,"Category returned successfully"));
+        }
+
         
         [HttpGet]
         public IActionResult GetCategories([FromQuery] string searchValue=""){
-            // if(!string.IsNullOrEmpty(searchValue)){
-            // var searchedCategory = categories.Where(c=>!string.IsNullOrEmpty(c.Name) && c.Name.Contains(searchValue,StringComparison.OrdinalIgnoreCase)).ToList();
-            //     return Ok(searchedCategory);
-            // }
+           
 
             var categoryList = categories.Select(c=> new CategoryReadDto{
                 CategoryId = c.CategoryId,
@@ -28,7 +42,7 @@ namespace ecommerce_web_api.Controllers
                 Description = c.Description,
                 CreatedAt = c.CreatedAt
             }).ToList();
-            return Ok(categoryList);
+            return Ok(ApiResponse<List<CategoryReadDto>>.SuccessResponse(categoryList,200,"Categorires returned successfully"));
         }
 
 
@@ -50,7 +64,7 @@ namespace ecommerce_web_api.Controllers
                 Description = newCategory.Description,
                 CreatedAt = newCategory.CreatedAt
             };
-            return Created($"/api/categories/{newCategory.CategoryId}",categoryReadDto);  
+            return Created($"/api/categories/{newCategory.CategoryId}",ApiResponse<CategoryReadDto>.SuccessResponse(categoryReadDto,201,"Categorires created successfully"));  
 
         }
 
@@ -60,23 +74,18 @@ namespace ecommerce_web_api.Controllers
             var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
     
             if(foundCategory == null){
-                return NotFound("Category with this id does not exist");
+                return NotFound(ApiResponse<object>.ErrorResponse(new List<string>{"Category is not found with this id"},404,"validation failed"));
             }
             if(categoryData == null){
                 return BadRequest("category data is missing");
             }
 
-            if(!string.IsNullOrWhiteSpace(categoryData.Name)){
-                if(categoryData.Name.Length>2)
-                    foundCategory.Name = categoryData.Name;
-                else return BadRequest("category name should be longger than 2");
-            }
             
-            if(!string.IsNullOrWhiteSpace(categoryData.Name)){
-                foundCategory.Description = categoryData.Description;
-            }
+            foundCategory.Name = categoryData.Name;
+            foundCategory.Description = categoryData.Description;
             
-            return Ok();
+            
+            return Ok(ApiResponse<object>.SuccessResponse(null,204,"Categorires updated successfully"));
         }
 
         
@@ -86,11 +95,11 @@ namespace ecommerce_web_api.Controllers
             var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
     
             if(foundCategory == null){
-                return NotFound("Category with this id does not exist");
+                return NotFound(ApiResponse<object>.ErrorResponse(new List<string>{"Category is not found with this id"},404,"validation failed"));
             }
 
             categories.Remove(foundCategory);
-            return NoContent();
+            return Ok(ApiResponse<object>.SuccessResponse(null,204,"Categorires deleted successfully"));
         }
     }
 }

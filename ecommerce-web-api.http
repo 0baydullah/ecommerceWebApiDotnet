@@ -1,6 +1,9 @@
 GET http://localhost:5268
 
 ###
+GET http://localhost:5268/api/categories/b2e0bb94-75f1-4176-8aaf-abb67ecadb91
+
+###
 GET http://localhost:5268/api/categories?searchValue=
 
 ###
@@ -8,7 +11,7 @@ POST http://localhost:5268/api/categories
 Content-Type: application/json
 
 {
-   // "name" : "Pookie",
+    "name" : "Pookie",
     "description" : ""
 }
 
