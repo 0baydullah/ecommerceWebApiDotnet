@@ -64,7 +64,7 @@ namespace ecommerce_web_api.Controllers
                 Description = newCategory.Description,
                 CreatedAt = newCategory.CreatedAt
             };
-            return Created($"/api/categories/{newCategory.CategoryId}",ApiResponse<CategoryReadDto>.SuccessResponse(categoryReadDto,201,"Categorires created successfully"));  
+            return Created(nameof(GetCategoriesById),ApiResponse<CategoryReadDto>.SuccessResponse(categoryReadDto,201,"Categorires created successfully"));  
 
         }
 
