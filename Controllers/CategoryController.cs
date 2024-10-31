@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ecommerce_web_api.DTOs;
 using ecommerce_web_api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,24 +17,24 @@ namespace ecommerce_web_api.Controllers
         
         [HttpGet]
         public IActionResult GetCategories([FromQuery] string searchValue=""){
-            if(!string.IsNullOrEmpty(searchValue)){
-            var searchedCategory = categories.Where(c=>!string.IsNullOrEmpty(c.Name) && c.Name.Contains(searchValue,StringComparison.OrdinalIgnoreCase)).ToList();
-                return Ok(searchedCategory);
-            }
-            return Ok(categories);
+            // if(!string.IsNullOrEmpty(searchValue)){
+            // var searchedCategory = categories.Where(c=>!string.IsNullOrEmpty(c.Name) && c.Name.Contains(searchValue,StringComparison.OrdinalIgnoreCase)).ToList();
+            //     return Ok(searchedCategory);
+            // }
+
+            var categoryList = categories.Select(c=> new CategoryReadDto{
+                CategoryId = c.CategoryId,
+                Name = c.Name,
+                Description = c.Description,
+                CreatedAt = c.CreatedAt
+            }).ToList();
+            return Ok(categoryList);
         }
 
 
         [HttpPost]
-        public IActionResult CreateCategories([FromBody] Category categoryData){
-            if(string.IsNullOrEmpty(categoryData.Name)){
-                return BadRequest("Category name is required");
-            }
-
-            if(!string.IsNullOrEmpty(categoryData.Name)){
-                if(categoryData.Name.Length<2)
-                    return BadRequest("category name should be longger than 2");
-            }
+        public IActionResult CreateCategories([FromBody] CategoryCreateDto categoryData){
+            
 
             var newCategory = new Category{
                 CategoryId = Guid.NewGuid(),
@@ -42,13 +43,20 @@ namespace ecommerce_web_api.Controllers
                 CreatedAt = DateTime.UtcNow,
             };
             categories.Add(newCategory);
-            return Created($"/api/categories/{newCategory.CategoryId}",newCategory);  
+
+            var categoryReadDto =  new CategoryReadDto{
+                CategoryId = newCategory.CategoryId,
+                Name = newCategory.Name,
+                Description = newCategory.Description,
+                CreatedAt = newCategory.CreatedAt
+            };
+            return Created($"/api/categories/{newCategory.CategoryId}",categoryReadDto);  
 
         }
 
 
         [HttpPut("{categoryId:guid}")]
-        public IActionResult UpdateCategoryById(Guid categoryId, [FromBody] Category categoryData){
+        public IActionResult UpdateCategoryById(Guid categoryId, [FromBody] CategoryUpdateDto categoryData){
             var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
     
             if(foundCategory == null){
