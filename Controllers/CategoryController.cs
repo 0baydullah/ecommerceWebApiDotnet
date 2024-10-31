@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ecommerce_web_api.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ecommerce_web_api.Models.Controllers
+namespace ecommerce_web_api.Controllers
 {
     [ApiController]
     [Route("/api/categories")]
